@@ -168,4 +168,8 @@ describe Contact do
     contact.valid?
     expect(contact.errors[:lastname]).to include("can't be blank")
   end
+
+  it 'has three phone numbers' do
+    expect(create(:contact).phones.count).to eq 3
+  end
 end

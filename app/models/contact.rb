@@ -6,6 +6,9 @@ class Contact < ActiveRecord::Base
   validates :lastname, presence: true
   validates :email, presence: true, uniqueness: true
 
+  # chapter4: factoryのcallbackのテストに使用した
+  # validates :phones, length: { is: 3 }
+
   def name
     [firstname, lastname].join(' ')
   end
