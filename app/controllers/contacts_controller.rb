@@ -1,6 +1,6 @@
 class ContactsController < ApplicationController
   # before_action :authenticate, except: [:index, :show]
-  before_action :set_contact, only: [:show, :edit, :update, :destroy]
+  before_action :set_contact, only: [:show, :edit, :update, :destroy, :hide_contact]
 
   # GET /contacts
   # GET /contacts.json
@@ -66,6 +66,19 @@ class ContactsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to contacts_url, notice: 'Contact was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  def hide_contact
+    @contact.update(hidden: true)
+    redirect_to contacts_url
+  end
+
+  def csv_download
+    respond_to do |format|
+      format.csv do
+        send_data Contact.to_csv
+      end
     end
   end
 

@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(version: 20140606043459) do
     t.string   "firstname"
     t.string   "lastname"
     t.string   "email"
+    t.boolean  "hidden"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

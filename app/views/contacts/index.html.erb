@@ -36,5 +36,6 @@
 <% if current_user %>
   <div class='form-actions'>
     <%= link_to 'New Contact', new_contact_path, class: 'btn btn-primary' %>
+    <%= link_to 'Export', csv_download_contacts_path(format: :csv) %>
   </div>
 <% end %>
