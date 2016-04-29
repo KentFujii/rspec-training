@@ -77,7 +77,8 @@ class ContactsController < ApplicationController
   def csv_download
     respond_to do |format|
       format.csv do
-        send_data Contact.to_csv
+        send_data Contact.to_csv,
+          type: 'text/csv'
       end
     end
   end

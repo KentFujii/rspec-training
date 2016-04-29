@@ -127,4 +127,12 @@ describe Contact do
   it 'has three phone numbers' do
     expect(create(:contact).phones.count).to eq 3
   end
+
+  it 'returns comma separated values' do
+    create(:contact,
+      firstname: 'Aaron',
+      lastname: 'Sumner',
+      email: 'aaron@sample.com')
+    expect(Contact.to_csv).to match 'firstname,lastname,email\nAaron,Sumner,aaron@sample.com'
+  end
 end

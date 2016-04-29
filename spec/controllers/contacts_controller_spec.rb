@@ -205,4 +205,20 @@ describe ContactsController do
       expect(response).to redirect_to contacts_url
     end
   end
+
+  describe 'CSV output' do
+    it 'returns a CSV file' do
+      get :csv_download, format: :csv
+      expect(response.headers['Content-Type']).to match('text/csv')
+    end
+
+    it 'returns content' do
+      create(:contact,
+        firstname: 'Aaron',
+        lastname: 'Sumner',
+        email: 'aaron@sample.com')
+      get :csv_download, format: :csv
+      expect(response.body).to match 'firstname,lastname,email\nAaron,Sumner,aaron@sample.com'
+    end
+  end
 end
