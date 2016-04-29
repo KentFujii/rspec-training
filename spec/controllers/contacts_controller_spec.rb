@@ -2,32 +2,42 @@ require 'rails_helper'
 
 describe ContactsController do
 
-  describe 'guest access' do
-    describe 'GET #new' do
-      it 'requires login' do
-        get :new
-        expect(response).to redirect_to login_url
+  shared_examples 'public access to contacts' do
+    before :each do
+      @contact = create(:contact,
+        firstname: 'Lawrence',
+        lastname: 'Smith'
+      )
+    end
+
+    describe 'GET #index' do
+      it 'populates an array of contacts' do
+        get :index
+        expect(assigns(:contacts)).to match_array [@contact]
+      end
+
+      it 'renders the :index template' do
+        get :index
+        expect(response).to render_template :index
       end
     end
 
-    describe 'POST #craete' do
-      it 'requires login' do
-        post :create, contact: attributes_for(:contact)
-        expect(response).to redirect_to login_url
+    describe 'GET #show' do
+      it 'assigns the requested contact to @contact' do
+        get :show, id: @contact
+        expect(assigns(:contact)).to eq @contact
+      end
+
+      it 'renders the :show template' do
+        get :show, id: @contact
+        expect(response).to render_template :show
       end
     end
   end
 
-  describe "user access" do
-    before :each do
-      user = create(:user)
-      session[:user_id] = user.id
-    end
-
+  shared_examples 'full access to contacts' do
     describe 'GET #index' do
-
       context 'with params[:letter]' do
-
         it "populates an array of contacts starting with the letter" do
           smith = create(:contact, lastname: 'Smith')
           jones = create(:contact, lastname: 'Jones')
@@ -41,9 +51,7 @@ describe ContactsController do
         end
       end
 
-
       context 'without params[:letter]' do
-
         it "populates an array of contacts starting with the letter" do
           smith = create(:contact, lastname: 'Smith')
           jones = create(:contact, lastname: 'Jones')
@@ -59,7 +67,6 @@ describe ContactsController do
     end
 
     describe 'GET #show' do
-
       it "assigns the requested contact to @contact" do
         contact = create(:contact)
         get :show, id: contact
@@ -74,7 +81,6 @@ describe ContactsController do
     end
 
     describe 'GET #new' do
-
       it "assigns a new Contact to @contact" do
         get :new
         expect(assigns(:contact)).to be_a_new(Contact)
@@ -87,7 +93,6 @@ describe ContactsController do
     end
 
     describe "GET #edit" do
-
       it "assigns the requested contact to @contact" do
         contact = create(:contact)
         get :edit, id: contact
@@ -111,7 +116,6 @@ describe ContactsController do
       end
 
       context "with valid attributes" do
-
         it "saves the new contact in the database" do
           expect {
             post :create, contact: attributes_for(:contact,
@@ -126,9 +130,7 @@ describe ContactsController do
         end
       end
 
-
       context "with invalid attributes" do
-
         it "does not save the new contact in the database" do
           expect{
             post :create,
@@ -152,7 +154,6 @@ describe ContactsController do
       end
 
       context "valid attributes" do
-
         it 'locates the requested @contact' do
           patch :update, id: @contact, contact: attributes_for(:contact)
           expect(assigns(:contact)).to eq(@contact)
@@ -174,9 +175,7 @@ describe ContactsController do
         end
       end
 
-
       context "with invalid attributes" do
-
         it "does not change the contact's attributes" do
           patch :update, id: @contact,
             contact: attributes_for(:contact,
@@ -243,5 +242,34 @@ describe ContactsController do
         expect(response.body).to match 'firstname,lastname,email\nAaron,Sumner,aaron@sample.com'
       end
     end
+  end
+
+  describe 'guest access' do
+    it_behaves_like 'public access to contacts'
+
+    describe 'GET #new' do
+      it 'requires login' do
+        get :new
+        expect(response).to redirect_to login_url
+      end
+    end
+
+    describe 'POST #craete' do
+      it 'requires login' do
+        post :create, contact: attributes_for(:contact)
+        expect(response).to redirect_to login_url
+      end
+    end
+  end
+
+  describe "user access" do
+    before :each do
+      user = create(:user)
+      session[:user_id] = user.id
+    end
+
+    it_behaves_like 'public access to contacts'
+
+    it_behaves_like 'full access to contacts'
   end
 end
