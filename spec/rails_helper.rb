@@ -14,6 +14,21 @@ ActiveRecord::Migration.maintain_test_schema!
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 RSpec.configure do |config|
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with :truncation
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+
   config.use_transactional_fixtures = true
 
   config.include FactoryGirl::Syntax::Methods

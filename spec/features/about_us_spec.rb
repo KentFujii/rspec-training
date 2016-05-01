@@ -13,7 +13,9 @@ feature 'About BigCo modal' do
     expect(page).not_to have_content 'BigCo produces the finest widgets in all the land'
 
     within '#about_us' do
-      click_button 'Close'
+      # click_button 'Close'
+      # ボタンが現れるまでCapybaraをタイムアウトする
+      find_button('Close').click
     end
 
     expect(page).not_to have_content 'About BigCo'
