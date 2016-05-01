@@ -9,10 +9,24 @@ describe ContactsController do
     #     lastname: 'Smith'
     #   )
     # end
+
     # 上記before_eachをletに変更
-    let(:contact) do
-      create(:contact, firstname: 'Lawrence', lastname: 'Smith')
+    # let(:contact) do
+    #   create(:contact, firstname: 'Lawrence', lastname: 'Smith')
+    # end
+
+    # 上記letをmock,stubに変更
+    let(:contact) {
+      build_stubbed(:contact, firstname: 'Lawrence', lastname: 'Smith')
+    }
+    before :each do
+      allow(contact).to receive(:persisted?).and_return(true)
+      allow(Contact).to receive(:order).with('lastname, firstname').and_return([contact])
+      allow(Contact).to receive(:find).with(contact.id.to_s).and_return(contact)
+      allow(contact).to receive(:save).and_return(true)
     end
+
+
 
     describe 'GET #index' do
       it 'populates an array of contacts' do
