@@ -135,4 +135,8 @@ describe Contact do
       email: 'aaron@sample.com')
     expect(Contact.to_csv).to match 'firstname,lastname,email\nAaron,Sumner,aaron@sample.com'
   end
+
+  # 以下ワンライナー記述
+  subject{ Contact.new }
+  specify { should validate_presence_of :firstname }
 end

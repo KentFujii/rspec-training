@@ -3,17 +3,21 @@ require 'rails_helper'
 describe ContactsController do
 
   shared_examples 'public access to contacts' do
-    before :each do
-      @contact = create(:contact,
-        firstname: 'Lawrence',
-        lastname: 'Smith'
-      )
+    # before :each do
+    #   @contact = create(:contact,
+    #     firstname: 'Lawrence',
+    #     lastname: 'Smith'
+    #   )
+    # end
+    # 上記before_eachをletに変更
+    let(:contact) do
+      create(:contact, firstname: 'Lawrence', lastname: 'Smith')
     end
 
     describe 'GET #index' do
       it 'populates an array of contacts' do
         get :index
-        expect(assigns(:contacts)).to match_array [@contact]
+        expect(assigns(:contacts)).to match_array [contact]
       end
 
       it 'renders the :index template' do
@@ -24,12 +28,12 @@ describe ContactsController do
 
     describe 'GET #show' do
       it 'assigns the requested contact to @contact' do
-        get :show, id: @contact
-        expect(assigns(:contact)).to eq @contact
+        get :show, id: contact
+        expect(assigns(:contact)).to eq contact
       end
 
       it 'renders the :show template' do
-        get :show, id: @contact
+        get :show, id: contact
         expect(response).to render_template :show
       end
     end
@@ -194,18 +198,22 @@ describe ContactsController do
     end
 
     describe "DELETE #destroy" do
-      before :each do
-        @contact = create(:contact)
-      end
+      # before :each do
+      #   @contact = create(:contact)
+      # end
+      # 上記before_eachをletで代用
+      let!(:contact){ create(:contact) }
 
       it "deletes the contact form the database" do
+        #　letがlet!でない場合は、expect{}のProc前にcontactを呼び出す
+        # contact
         expect{
-          delete :destroy, id: @contact
+          delete :destroy, id: contact
         }.to change(Contact, :count).by(-1)
       end
 
       it "redirects to contacts#index" do
-        delete :destroy, id: @contact
+        delete :destroy, id: contact
         expect(response).to redirect_to contacts_url
       end
     end
