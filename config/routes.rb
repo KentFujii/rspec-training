@@ -11,5 +11,7 @@ Rails.application.routes.draw do
     resources :phones
   end
 
+  resources :news_releases
+
   root 'contacts#index'
 end
